@@ -1,0 +1,266 @@
+---
+title: "nebeenierenrinde_tumor"
+author: "Guiraud Tresor Tonou"
+date: '2022-08-18'
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Histograms
+
+# Control group
+
+```{r}
+zscore_DB_control%>%
+  #select(-c(7:9,21)) %>% 
+  gather(Attributes, value, 1:20) %>% 
+  ggplot(aes(x=value,)) + 
+  geom_histogram(fill = "green3", color = "black", bins = 15) +
+  geom_density(alpha=.2, fill="#FF6666")+
+  ggtitle("Histogram for each variable in Control database")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_wrap(~Attributes, scales = "free_x") +
+  labs(x = "Value", y = "Frequency")
+```
+
+# Tumor Patients
+
+```{r}
+zscore_DB_Tumor%>%
+  #select(-c(7:9,21)) %>% 
+  gather(Attributes, value, 1:20) %>% 
+  ggplot(aes(x=value,)) + 
+  geom_histogram(fill = "lightblue2", color = "black", bins = 15) +
+  geom_density(alpha=.2, fill="#FF6666")+
+  ggtitle("Histogram for each variable in Tumor Patients database")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_wrap(~Attributes, scales = "free_x") +
+  labs(x = "Value", y = "Frequency")
+```
+
+```{r}
+gradient_col<- ggplot2::scale_fill_gradient2(
+  low = "blue",
+  high = "red",
+  midpoint = 0
+  #limits=c(-41.95,41.95)
+)
+heatmaply(zscore_DB_Tumor[,-c(7:9,21,37:38)],
+          xlab = "Metaboliten",
+          ylab = "Probe Nr",
+          main = "Heatmap Tumor patients",
+          grid_gap = 0,
+          scale = "column",
+          scale_fill_gradient_fun = gradient_col,
+          colors = viridis(n=200, alpha = 1, begin = 0, end = 1, option = "viridis"),
+          row_text_angle = 0,
+          column_text_angle = 45)
+
+```
+
+```{r}
+gradient_col<- ggplot2::scale_fill_gradient2(
+  low = "blue",
+  high = "red",
+  midpoint = 0
+  #limits=c(-41.95,41.95)
+)
+heatmaply(databank[,-c(7:9,21,38)],
+          grid_gap = 0,
+          xlab = "Metaboliten",
+          ylab = "Probe Nr",
+          main = "Heatmap Control and Tumor Patients",
+          scale = "column",
+          scale_fill_gradient_fun = gradient_col,
+          colors = viridis(n=200, alpha = 1, begin = 0, end = 1, option = "viridis"),
+          row_text_angle = 0,
+          column_text_angle = 45)
+```
+
+## Grouped boxplots
+
+```{r}
+ databank_short<- databank[,c(1:6,37)]
+databank_long<-melt(databank_short, id = "diagnose") #convert wide format to a long format
+bplt_a <- ggplot(databank_long, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  ggtitle("Andogens und Präkursor")+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25),plot.title = element_text(hjust = 0.5))+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+#coord_flip()
+bplt_a
+```
+
+```{r}
+databank_short_1 <- databank[,c(9,11:12,14,18,37)]
+
+databank_long_1<-melt(databank_short_1, id ="diagnose") #convert wide format to a long format
+bplt_b <- ggplot(databank_long_1, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25), plot.title = element_text(hjust = 0.5))+
+  ggtitle("Andogens und Präkursor")+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_b
+```
+
+```{r}
+databank_short_2 <- databank[,c(10,13,15:16,37)]
+
+databank_long_2<-melt(databank_short_2, id ="diagnose") #convert wide format to a long format
+bplt_c <- ggplot(databank_long_2, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  ggtitle("Progesteron und Präkursor")+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25), plot.title = element_text(hjust = 0.5))+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_c
+
+```
+
+```{r}
+databank_short_3 <- databank[,c(17,19,22:23,37)]
+
+databank_long_3<-melt(databank_short_3, id ="diagnose") #convert wide format to a long format
+bplt_d <- ggplot(databank_long_3, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  ggtitle("Progesteron und Präkursor")+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25),plot.title = element_text(hjust = 0.5))+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_d
+```
+
+```{r}
+databank_short_4 <- databank[,c(25:27,20,37)]
+
+databank_long_4<-melt(databank_short_4, id ="diagnose") #convert wide format to a long format
+bplt_e <- ggplot(databank_long_4, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  ggtitle("Mineralocorticoids und Präkursor")+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25),plot.title = element_text(hjust = 0.5))+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_e
+```
+
+```{r}
+databank_short_5 <- databank[,c(24,28:31,37)]
+
+databank_long_5 <-melt(databank_short_5, id ="diagnose") #convert wide format to a long format
+#label <- labs(title = "Glucocorticoids", tag = "center")
+bplt_f <- ggplot(databank_long_5, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25), plot.title = element_text(hjust = 0.5))+
+  ggtitle("Glucorticoids und Präkursor")+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_f
+```
+
+```{r}
+databank_short_6 <- databank[,c(32:36,37)]
+databank_long_6 <-melt(databank_short_6, id ="diagnose") #convert wide format to a long format
+bplt_g <- ggplot(databank_long_6, aes(x = variable, y = value, color = diagnose))+# ggplot function
+  scale_color_discrete('diagnose')+
+  stat_boxplot(geom = "errorbar", # Boxplot with error bars
+               width = 0.2)+
+  theme(axis.line = element_line(colour = "black", # Theme customization
+                                 size = 0.25), plot.title = element_text(hjust = 0.5))+
+  ggtitle("Glucorticoids und Präkursor")+
+  geom_boxplot(alpha = 0.9, outlier.colour = "cyan")+
+  stat_summary(fun = mean,
+               geom = "point",
+               size = 0.9,
+               color = "black")
+  #coord_flip()
+bplt_g
+```
+
+## Machine learning
+
+# Decision tree
+
+```{r}
+tree_model_3 <- rpart(diagnose ~ ., databank)
+rpart.plot(tree_model_3, type = 1, yesno = 2, extra = 1)
+tree_model_3$variable.importance
+```
+
+```{r}
+tree_model_2 <- rpart(diagnose ~ ., zscore_DB_Tumor[-c(8,10,17),]) # excluding ACX patients
+rpart.plot(tree_model_2, type = 1, yesno = 2, extra = 1)
+tree_model_2$variable.importance
+```
+
+```{r}
+tree_model_1 <- rpart(diagnose ~ ., zscore_DB_Tumor)
+rpart.plot(tree_model_1, type = 1, yesno = 2, extra = 1)
+tree_model_1$variable.importance
+```
+
+```{r}
+y <- as.matrix(na.omit(zscore_DB_Tumor[,-c(7:9,21,37:39)]))
+d  <- as.factor(zscore_DB_Tumor$diagnose)
+
+# Create splsda model
+spls.model.tp <- mixOmics::splsda(y, d, keepX = c(30,30),ncomp = 2, scale = T,
+                               max.iter = 500, tol = 1e-06)
+
+# Predicted Background - Tumor patients (ACA;ACX & ACC)
+# backgroud.predict and plotIndiv should be run all at once
+background <- background.predict(spls.model.tp, comp.predicted=2,
+                                 dist = "max.dist") 
+plotIndiv(spls.model.tp, comp = 1:2, group = d,
+          ind.names = FALSE, title = "Maximum distance with predicted background",
+          legend = TRUE,  background = background)
+```
+
+## roc curve
+
+```{r}
+auc.plsda.tp <- auroc(spls.model.tp)
+```
