@@ -10,6 +10,6 @@ Calcutation of z-score against the control group.
 127 control : 63 boys and 64 girls divided into nine age groups
 ## Calculating Z-score
 The standard score (Z-score) for the tumor patient is calculated against same age groups and same sex, inorder to make the subsequent analysis independent from sex and age.
-''
+```
 z = x - mean (x)/ std
-''
+```
